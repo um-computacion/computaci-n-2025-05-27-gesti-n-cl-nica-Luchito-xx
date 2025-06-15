@@ -3,6 +3,7 @@ from datetime import datetime
 ####### Paciente ####### 
 
 class Paciente:
+
     def __init__(self, nombre: str, dni: str, fecha_nacimiento: str):
 
         if not nombre or not nombre.strip():
@@ -28,6 +29,7 @@ class Paciente:
 ####### Especialidad ####### 
 
 class Especialidad:
+
     def __init__(self, tipo: str, dias: list[str]):
 
         if not tipo or not tipo.strip():
@@ -64,6 +66,7 @@ class Especialidad:
 ####### Medico ####### 
 
 class Medico:
+
     def __init__(self, nombre: str, matricula: str):
 
         if not nombre or not nombre.strip():
@@ -77,8 +80,8 @@ class Medico:
     
     def agregar_especialidad(self, especialidad: Especialidad):
 
-        for espdad in self.__especialidades__:
-            if espdad.obtener_especialidad().lower() == especialidad.obtener_especialidad().lower():
+        for esp in self.__especialidades__:
+            if esp.obtener_especialidad().lower() == especialidad.obtener_especialidad().lower():
                 raise EspecialidadInvalidaException(f"El medico ya tiene la especialidad {especialidad.obtener_especialidad()}")
         
         self.__especialidades__.append(especialidad)
@@ -107,9 +110,47 @@ class Medico:
 ####### Turno ####### 
 
 class Turno:
-    pass
 
-####### Receta####### 
+    def __init__(self, paciente: Paciente, medico: Medico, fecha_hora: datetime, especialidad: str):
+
+        if not isinstance(paciente, Paciente):
+            raise DatoInvalidoException("Debe proporcionar un paciente valido")
+        if not isinstance(medico, Medico):
+            raise DatoInvalidoException("Debe proporcionar un medico valido")
+        if not isinstance(fecha_hora, datetime):
+            raise DatoInvalidoException("Debe proporcionar una fecha y hora valida")
+        if not especialidad or not especialidad.strip():
+            raise DatoInvalidoException("Debe especificar una especialidad")
+        
+        self.__paciente__ = paciente
+        self.__medico__ = medico
+        self.__fecha_hora__ = fecha_hora
+        self.__especialidad__ = especialidad.strip()
+    
+    def obtener_medico(self) -> Medico:
+
+        return self.__medico__
+    
+    def obtener_fecha_hora(self) -> datetime:
+
+        return self.__fecha_hora__
+    
+    def obtener_paciente(self) -> Paciente:
+
+        return self.__paciente__
+    
+    def obtener_especialidad(self) -> str:
+
+        return self.__especialidad__
+    
+    def __str__(self) -> str:
+
+        fecha_str = self.__fecha_hora__.strftime("%d/%m/%Y %H:%M")
+        return f"Turno: {self.__paciente__.obtener_dni()} con Dr/a. {self.__medico__.obtener_matricula()} - {self.__especialidad__} el {fecha_str}"
+
+
+
+####### Receta ####### 
 
 class Receta:
     pass
@@ -123,11 +164,15 @@ class HistoriaClinica:
 ####### Clinica ####### 
 
 class Clinica:
+    
     def __init__(self):
 
         self.__pacientes__: dict[str, Paciente] = {}
         self.__medicos__: dict[str, Medico] = {}
+        self.__turnos__: list[Turno] = []
     
+    # Registro y acceso
+
     def agregar_paciente(self, paciente: Paciente):
 
         dni = paciente.obtener_dni()
@@ -158,11 +203,34 @@ class Clinica:
             raise MedicoNoEncontradoException(f"No se encontro medico con matricula {matricula}")
         return self.__medicos__[matricula]
     
-    def obtener_paciente_por_dni(self, dni: str) -> Paciente:
+    #Turno
 
-        if dni not in self.__pacientes__:
-            raise PacienteNoEncontradoException(f"No se encontro paciente con DNI {dni}")
-        return self.__pacientes__[dni]
+    def agendar_turno(self, dni: str, matricula: str, especialidad: str, fecha_hora: datetime):
+        self.validar_existencia_paciente(dni)
+        self.validar_existencia_medico(matricula)
+        self.validar_turno_no_duplicado(matricula, fecha_hora)
+        
+        paciente = self.__pacientes__[dni]
+        medico = self.__medicos__[matricula]
+        dia_semana = self.obtener_dia_semana_en_espanol(fecha_hora)
+
+        self.validar_especialidad_en_dia(medico, especialidad, dia_semana)
+        
+
+        turno = Turno(paciente, medico, fecha_hora, especialidad)
+        self.__turnos__.append(turno)
+    
+    def obtener_turnos(self) -> list[Turno]:
+        return self.__turnos__.copy()
+
+    #Validar y utilidades
+
+    def validar_turno_no_duplicado(self, matricula: str, fecha_hora: datetime):
+
+        for turno in self.__turnos__:
+            if (turno.obtener_medico().obtener_matricula() == matricula and 
+                turno.obtener_fecha_hora() == fecha_hora):
+                raise TurnoOcupadoException(f"El medico ya tiene un turno agendado en esa fecha y hora")
     
     def validar_existencia_paciente(self, dni: str):
 
@@ -173,18 +241,6 @@ class Clinica:
 
         if matricula not in self.__medicos__:
             raise MedicoNoEncontradoException(f"No se encontro medico con matricula {matricula}")
-    
-    def obtener_dia_semana_en_espanol(self, fecha_hora: datetime) -> str:
-        dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
-
-        return dias[fecha_hora.weekday()]
-    
-    def obtener_especialidad_disponible(self, medico: Medico, dia_semana: str) -> str:
-
-        especialidad = medico.obtener_especialidad_para_dia(dia_semana)
-        if not especialidad:
-            raise MedicoNoDisponibleException(f"El medico no atiende el dia {dia_semana}")
-        return especialidad
     
     def validar_especialidad_en_dia(self, medico: Medico, especialidad_solicitada: str, dia_semana: str):
 
@@ -197,6 +253,19 @@ class Clinica:
         raise MedicoNoDisponibleException(
             f"El medico no atiende {especialidad_solicitada} el dia {dia_semana}"
         )
+    
+    def obtener_dia_semana_en_espanol(self, fecha_hora: datetime) -> str:
+        dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+
+        return dias[fecha_hora.weekday()]
+    
+    def obtener_especialidad_disponible(self, medico: Medico, dia_semana: str) -> str:
+
+        especialidad = medico.obtener_especialidad_para_dia(dia_semana)
+        if not especialidad:
+            raise MedicoNoDisponibleException(f"El medico no atiende el dia {dia_semana}")
+        return especialidad
+
     
 ####### Excepciones ####### 
 class PacienteNoEncontradoException(Exception):
