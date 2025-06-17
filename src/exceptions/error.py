@@ -1,10 +1,16 @@
 class PacienteNoEncontradoException(Exception):
     pass
 
+class PacienteDuplicadoException(Exception):
+    pass
+
 class MedicoNoEncontradoException(Exception):
     pass
 
 class MedicoNoDisponibleException(Exception):
+    pass
+
+class MedicoDuplicadoException(Exception):
     pass
 
 class EspecialidadInvalidaException(Exception):
