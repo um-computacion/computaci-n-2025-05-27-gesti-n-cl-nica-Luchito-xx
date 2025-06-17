@@ -1,11 +1,19 @@
 import unittest
 from datetime import datetime
-from modelo import (
-    Clinica, Paciente, Medico, Especialidad, Turno, Receta, HistoriaClinica,
-    PacienteNoEncontradoException, MedicoNoEncontradoException,
-    MedicoNoDisponibleException, EspecialidadInvalidaException,
-    DatoInvalidoException, TurnoOcupadoException, RecetaInvalidaException
+from src.models.clinica import Clinica
+from src.models.paciente import Paciente
+from src.models.medico import Medico
+from src.models.especialidad import Especialidad
+from src.models.historiaClinica import HistoriaClinica
+from src.exceptions.error import (
+    DatoInvalidoException, 
+    MedicoNoDisponibleException, 
+    PacienteNoEncontradoException, 
+    MedicoNoEncontradoException, 
+    TurnoOcupadoException, 
+    RecetaInvalidaException
 )
+
 
 class TestClinica(unittest.TestCase):
     
@@ -14,16 +22,16 @@ class TestClinica(unittest.TestCase):
         self.clinica = Clinica()
         
         # Crear pacientes de prueba
-        self.paciente1 = Paciente("Lucía Herrera", "99887766", "05/01/1988")
-        self.paciente2 = Paciente("Martín Díaz", "66554433", "18/09/1992")
+        self.paciente1 = Paciente("Lucia Herrera", "99887766", "05/01/1988")
+        self.paciente2 = Paciente("Martin Diaz", "66554433", "18/09/1992")
         
-        # Crear médicos de prueba
+        # Crear medicos de prueba
         self.medico1 = Medico("Dr. Alejandro Ruiz", "MP201")
-        self.medico2 = Medico("Dra. Sofía Castro", "MP202")
+        self.medico2 = Medico("Dra. Sofia Castro", "MP202")
         
         # Crear especialidades
-        self.especialidad_cardiologia = Especialidad("Cardiología", ["lunes", "miércoles", "viernes"])
-        self.especialidad_pediatria = Especialidad("Pediatría", ["martes", "jueves"])
+        self.especialidad_cardiologia = Especialidad("Cardiologia", ["lunes", "miércoles", "viernes"])
+        self.especialidad_pediatria = Especialidad("Pediatria", ["martes", "jueves"])
     
     def test_agregar_paciente_valido(self):
 
@@ -32,7 +40,7 @@ class TestClinica(unittest.TestCase):
         self.assertEqual(len(pacientes), 1)
         self.assertEqual(pacientes[0].obtener_dni(), "99887766")
         
-        # Verificar que se creó la historia clínica
+        # Verificar que se creo la historia clinica
         historia = self.clinica.obtener_historia_clinica("99887766")
         self.assertIsInstance(historia, HistoriaClinica)
     
@@ -75,27 +83,27 @@ class TestClinica(unittest.TestCase):
         self.clinica.agregar_paciente(self.paciente1)
         self.clinica.agregar_medico(self.medico1)
         
-        # Agendar turno para un lunes (día que atiende cardiología)
+        # Agendar turno para un lunes (dia que atiende cardiologia)
         fecha_lunes = datetime(2025, 6, 23, 10, 0)  # Lunes
-        self.clinica.agendar_turno("99887766", "MP201", "Cardiología", fecha_lunes)
+        self.clinica.agendar_turno("99887766", "MP201", "Cardiologia", fecha_lunes)
         
         turnos = self.clinica.obtener_turnos()
         self.assertEqual(len(turnos), 1)
-        self.assertEqual(turnos[0].obtener_especialidad(), "Cardiología")
+        self.assertEqual(turnos[0].obtener_especialidad(), "Cardiologia")
     
     def test_agendar_turno_paciente_inexistente(self):
 
         self.clinica.agregar_medico(self.medico1)
         fecha = datetime(2025, 6, 23, 10, 0)
         with self.assertRaises(PacienteNoEncontradoException):
-            self.clinica.agendar_turno("99999999", "MP201", "Cardiología", fecha)
+            self.clinica.agendar_turno("99999999", "MP201", "Cardiologia", fecha)
     
     def test_agendar_turno_medico_inexistente(self):
 
         self.clinica.agregar_paciente(self.paciente1)
         fecha = datetime(2025, 6, 23, 10, 0)
         with self.assertRaises(MedicoNoEncontradoException):
-            self.clinica.agendar_turno("99887766", "MP999", "Cardiología", fecha)
+            self.clinica.agendar_turno("99887766", "MP999", "Cardiologia", fecha)
     
     def test_agendar_turno_medico_no_atiende_especialidad(self):
 
@@ -105,7 +113,7 @@ class TestClinica(unittest.TestCase):
         
         fecha_lunes = datetime(2025, 6, 23, 10, 0)
         with self.assertRaises(MedicoNoDisponibleException):
-            self.clinica.agendar_turno("99887766", "MP201", "Pediatría", fecha_lunes)
+            self.clinica.agendar_turno("99887766", "MP201", "Pediatria", fecha_lunes)
     
     def test_agendar_turno_medico_no_atiende_dia(self):
 
@@ -113,10 +121,10 @@ class TestClinica(unittest.TestCase):
         self.clinica.agregar_paciente(self.paciente1)
         self.clinica.agregar_medico(self.medico1)
         
-        # Martes - día que no atiende cardiología
+        # Martes - dia que no atiende cardiologia
         fecha_martes = datetime(2025, 6, 24, 10, 0)
         with self.assertRaises(MedicoNoDisponibleException):
-            self.clinica.agendar_turno("99887766", "MP201", "Cardiología", fecha_martes)
+            self.clinica.agendar_turno("99887766", "MP201", "Cardiologia", fecha_martes)
     
     def test_agendar_turno_duplicado(self):
 
@@ -128,11 +136,11 @@ class TestClinica(unittest.TestCase):
         fecha = datetime(2025, 6, 23, 10, 0)  # Lunes
         
         # Primer turno - exitoso
-        self.clinica.agendar_turno("99887766", "MP201", "Cardiología", fecha)
+        self.clinica.agendar_turno("99887766", "MP201", "Cardiologia", fecha)
         
         # Segundo turno en la misma fecha/hora - debe fallar
         with self.assertRaises(TurnoOcupadoException):
-            self.clinica.agendar_turno("66554433", "MP201", "Cardiología", fecha)
+            self.clinica.agendar_turno("66554433", "MP201", "Cardiologia", fecha)
     
     def test_emitir_receta_valida(self):
 
@@ -142,7 +150,7 @@ class TestClinica(unittest.TestCase):
         medicamentos = ["Aspirina 100mg", "Enalapril 10mg"]
         self.clinica.emitir_receta("99887766", "MP201", medicamentos)
         
-        # Verificar que la receta se agregó a la historia clínica
+        # Verificar que la receta se agrego a la historia clinica
         historia = self.clinica.obtener_historia_clinica("99887766")
         recetas = historia.obtener_recetas()
         self.assertEqual(len(recetas), 1)
@@ -183,12 +191,12 @@ class TestClinica(unittest.TestCase):
         
         # Agendar turno
         fecha = datetime(2025, 6, 23, 10, 0)  # Lunes
-        self.clinica.agendar_turno("99887766", "MP201", "Cardiología", fecha)
+        self.clinica.agendar_turno("99887766", "MP201", "Cardiologia", fecha)
         
         # Emitir receta
         self.clinica.emitir_receta("99887766", "MP201", ["Aspirina"])
         
-        # Verificar historia clínica
+        # Verificar historia clinica
         historia = self.clinica.obtener_historia_clinica("99887766")
         self.assertEqual(len(historia.obtener_turnos()), 1)
         self.assertEqual(len(historia.obtener_recetas()), 1)
@@ -200,5 +208,4 @@ class TestClinica(unittest.TestCase):
             self.clinica.emitir_receta("99887766", "MP201", [])
             
 if __name__ == '__main__':
-    # Configurar el runner de tests para mostrar más detalles
     unittest.main(verbosity=2)
