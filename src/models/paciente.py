@@ -22,7 +22,25 @@ class Paciente:
 
         if fecha_nac_dt > datetime.now():
             raise DatoInvalidoException("La fecha de nacimiento no puede ser en el futuro")
+        
+        nombre_limpio = nombre.strip()
+        if len(nombre_limpio) > 50:
+            raise DatoInvalidoException("El nombre del paciente no puede tener mas de 50 caracteres")
 
+        for char in nombre_limpio:
+            if not (char.isalpha() or char.isspace()):
+                raise DatoInvalidoException("El nombre del paciente solo puede contener letras y espacios")
+            
+        dni_limpio = dni.strip()
+        if len(dni_limpio) != 8:
+            raise DatoInvalidoException("El DNI debe tener exactamente 8 caracteres")
+        
+        if not dni_limpio.isdigit():
+            raise DatoInvalidoException("El DNI solo puede contener numeros")
+         
+        self.__nombre__= nombre_limpio
+        self.__dni__ = dni_limpio
+        self.__fecha_nacimiento__ = fecha_nacimiento.strip()
         self.__nombre__= nombre.strip()
         self.__dni__ = dni.strip()
         self.__fecha_nacimiento__ = fecha_nacimiento.strip()

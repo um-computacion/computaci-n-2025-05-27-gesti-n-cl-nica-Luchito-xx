@@ -2,7 +2,8 @@ from datetime import datetime
 from src.models.paciente import Paciente
 from src.models.medico import Medico
 from src.exceptions.error import (
-    RecetaInvalidaException
+    RecetaInvalidaException,
+    DatoInvalidoException
 )
 class Receta:
 

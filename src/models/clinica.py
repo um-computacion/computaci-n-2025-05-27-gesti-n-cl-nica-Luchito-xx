@@ -11,7 +11,9 @@ from src.exceptions.error import (
     MedicoNoDisponibleException,
     TurnoOcupadoException,
     MedicoNoEncontradoException,
-    PacienteNoEncontradoException
+    PacienteNoEncontradoException,
+    MedicoDuplicadoException,
+    PacienteDuplicadoException
 )
 
 class Clinica:
@@ -29,7 +31,7 @@ class Clinica:
 
         dni = paciente.obtener_dni()
         if dni in self.__pacientes__:
-            raise DatoInvalidoException(f"Ya existe un paciente con DNI {dni}")
+            raise PacienteDuplicadoException(f"Ya existe un paciente con DNI {dni}")
         
         self.__pacientes__[dni] = paciente
         
@@ -39,7 +41,7 @@ class Clinica:
 
         matricula = medico.obtener_matricula()
         if matricula in self.__medicos__:
-            raise DatoInvalidoException(f"Ya existe un medico con matricula {matricula}")
+            raise MedicoDuplicadoException(f"Ya existe un medico con matricula {matricula}")
         
         self.__medicos__[matricula] = medico
     
