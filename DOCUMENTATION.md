@@ -1,34 +1,5 @@
 # Sistema de Gestión Clínica
 
-```
-clinica/
-├── src/
-│   ├── __init__.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── paciente.py
-│   │   ├── medico.py
-│   │   ├── especialidad.py
-│   │   ├── turno.py
-│   │   ├── receta.py
-│   │   ├── historiaClinica.py
-│   │   └── clinica.py
-│   ├── exceptions/
-│   │   ├── __init__.py
-│   │   └── error.py
-│   └── cli.py
-├── tests/
-│   ├── __init__.py
-│   ├── test_clinica.py
-│   ├── test_especialidades.py
-│   ├── test_historiaClinica.py
-│   ├── test_medico.py
-│   ├── test_paciente.py
-│   ├── test_recetas.py
-│   └── test_turnos.py
-└── README.md
-```
-
 ## Cómo ejecutar el sistema
 
 - Ejecute archivo:
