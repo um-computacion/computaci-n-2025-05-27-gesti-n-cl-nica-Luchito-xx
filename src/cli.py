@@ -1,9 +1,17 @@
 from datetime import datetime
-from modelo import (
-    Clinica, Paciente, Medico, Especialidad, 
-    MedicoNoEncontradoException, EspecialidadInvalidaException,
-    DatoInvalidoException,PacienteNoEncontradoException, 
-    MedicoNoDisponibleException, TurnoOcupadoException)
+from src.models.clinica import Clinica
+from src.models.paciente import Paciente
+from src.models.especialidad import Especialidad
+from src.models.medico import Medico
+from src.exceptions.error import (
+    DatoInvalidoException,
+    EspecialidadInvalidaException,
+    PacienteNoEncontradoException,
+    MedicoNoDisponibleException,
+    MedicoNoEncontradoException,
+    TurnoOcupadoException,
+    RecetaInvalidaException
+)
 
 
 class CLI:
@@ -155,12 +163,50 @@ class CLI:
             print(f"Error inesperado: {e}")
     
     def emitir_receta(self):
-
-        pass
+        print("\n  EMITIR RECETA")
+        print("=" * 50)
+        
+        try:
+            dni = input("DNI del paciente: ").strip()
+            matricula = input("Matricula del medico: ").strip()
+            
+            print("\nIngrese los medicamentos (escriba 'fin' para terminar):\n")
+            medicamentos = []
+            while True:
+                medicamento = input("Medicamento: ").strip()
+                if medicamento.lower() == 'fin':
+                    break
+                if medicamento:
+                    medicamentos.append(medicamento)
+            
+            if not medicamentos:
+                print("Debe ingresar al menos un medicamento.")
+                return
+            
+            self.clinica.emitir_receta(dni, matricula, medicamentos)
+            print("\nReceta emitida exitosamente.\n")
+            
+        except (PacienteNoEncontradoException, MedicoNoEncontradoException) as e:
+            print(f" {e}")
+        except RecetaInvalidaException as e:
+            print(f" Error en la receta: {e}")
+        except Exception as e:
+            print(f" Error inesperado: {e}")
     
     def ver_historia_clinica(self):
 
-        pass
+        print("\n  HISTORIA CLÍNICA")
+        print("=" * 50)
+        
+        try:
+            dni = input("DNI del paciente: ").strip()
+            historia = self.clinica.obtener_historia_clinica(dni)
+            print("\n" + str(historia))
+            
+        except PacienteNoEncontradoException as e:
+            print(f"{e}")
+        except Exception as e:
+            print(f"Error inesperado: {e}")
     
     def ver_todos_turnos(self):
 
