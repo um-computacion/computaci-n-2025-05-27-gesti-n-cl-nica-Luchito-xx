@@ -2,10 +2,10 @@
 
 ## Cómo ejecutar el sistema
 
-- Ejecute archivo:
+- Ejecute archivo en raiz de proyecto: 
 
 ```bash
-python main.py
+python3 main.py
 ```
 
 El sistema iniciará con un menú interactivo que permite:
@@ -17,12 +17,13 @@ El sistema iniciará con un menú interactivo que permite:
 
 ## Cómo ejecutar las pruebas
 
+- Ejecute archivos en raiz del proyecto
 ```bash
 # Ejecutar todas las pruebas
-python -m pytest tests/
+python3 -m pytest tests/
 
 # Ejecutar pruebas específicas
-python -m pytest tests/"nombre_archivo.py"
+python3 -m pytest tests/"nombre_archivo.py"
 ```
 
 ## Diseño General
