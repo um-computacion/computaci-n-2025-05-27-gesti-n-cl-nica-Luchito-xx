@@ -20,9 +20,9 @@ class CLI:
     
     def mostrar_menu(self):
 
-        print("\n" + "="*50)
+        print("\n" + "#"*50)
         print("            SISTEMA DE GESTION CLINICA")
-        print("="*50)
+        print("#"*50)
         print("1) Agregar paciente")
         print("2) Agregar medico")
         print("3) Agendar turno")
@@ -33,7 +33,7 @@ class CLI:
         print("8) Ver todos los pacientes")
         print("9) Ver todos los medicos")
         print("0) Salir")
-        print("="*50)
+        print("#"*50)
     
     def solicitar_opcion(self) -> str:
 
@@ -51,7 +51,7 @@ class CLI:
     def agregar_paciente(self):
 
         print("\n AGREGAR PACIENTE")
-        print("=" * 50)
+        print("*" * 50)
         
         try:
             nombre = input("Nombre completo: ").strip()
@@ -71,7 +71,7 @@ class CLI:
     def agregar_medico(self):
 
         print("\n AGREGAR MEDICO")
-        print("=" * 50)
+        print("*" * 50)
         
         try:
             nombre = input("Nombre completo: ").strip()
@@ -86,7 +86,7 @@ class CLI:
                     break
                 
                 print("Dias de atencion (separados por comas):")
-                print("Opciones: lunes, martes, miercoles, jueves, viernes, sabado, domingo")
+                print("\nOpciones: lunes, martes, miercoles, jueves, viernes, sabado, domingo")
                 dias_input = input("Dias: ").strip()
                 
                 if dias_input:
@@ -108,7 +108,7 @@ class CLI:
 
     def agendar_turno(self):
         print("\n  AGENDAR TURNO")
-        print("=" * 50)
+        print("*" * 50)
         
         try:
             dni = input("DNI del paciente: ").strip()
@@ -138,7 +138,7 @@ class CLI:
     def agregar_especialidad_medico(self):
 
         print("\n  AGREGAR ESPECIALIDAD A MEDICO")
-        print("=" * 50)
+        print("*" * 50)
         
         try:
             matricula = input("Matricula del medico: ").strip()
@@ -153,7 +153,7 @@ class CLI:
             especialidad = Especialidad(especialidad_nombre, dias)
             medico.agregar_especialidad(especialidad)
             
-            print(f"Especialidad {especialidad_nombre} agregada al medico.")
+            print(f"\nEspecialidad {especialidad_nombre} agregada al medico.")
             
         except MedicoNoEncontradoException as e:
             print(f"{e}")
@@ -164,7 +164,7 @@ class CLI:
     
     def emitir_receta(self):
         print("\n  EMITIR RECETA")
-        print("=" * 50)
+        print("*" * 50)
         
         try:
             dni = input("DNI del paciente: ").strip()
@@ -196,7 +196,7 @@ class CLI:
     def ver_historia_clinica(self):
 
         print("\n  HISTORIA CLÍNICA")
-        print("=" * 50)
+        print("*" * 50)
         
         try:
             dni = input("DNI del paciente: ").strip()
@@ -211,7 +211,7 @@ class CLI:
     def ver_todos_turnos(self):
 
         print("\n TODOS LOS TURNOS")
-        print("=" * 50)
+        print("*" * 50)
         
         turnos = self.clinica.obtener_turnos()
         if not turnos:
@@ -224,7 +224,7 @@ class CLI:
     def ver_todos_pacientes(self):
 
         print("\n TODOS LOS PACIENTES")
-        print("=" * 50)
+        print("*" * 50)
         
         pacientes = self.clinica.obtener_pacientes()
         if not pacientes:
@@ -237,7 +237,7 @@ class CLI:
     def ver_todos_medicos(self):
 
         print("\n TODOS LOS MEDICOS")
-        print("=" * 50)
+        print("*" * 50)
         
         medicos = self.clinica.obtener_medicos()
         if not medicos:
@@ -250,7 +250,7 @@ class CLI:
     
     def ejecutar(self):
 
-        print("            SISTEMA DE GESTION CLINICA")
+        print("\nNos alegramos de volver a verlo")
         
         while True:
             try:
